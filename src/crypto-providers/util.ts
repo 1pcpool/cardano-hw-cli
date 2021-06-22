@@ -42,6 +42,11 @@ enum PathTypes {
   // pool cold key in pool registrations and retirements
   PATH_POOL_COLD_KEY,
 
+  // path multisig
+  PATH_WALLET_MULTISIG_ACCOUNT,
+  PATH_WALLET_MULTISIG_SPENDING_KEY,
+  PATH_WALLET_MULTISIG_STAKING_KEY,
+
   // not one of the above
   PATH_INVALID,
 }
@@ -103,6 +108,35 @@ const classifyPath = (path: number[]) => {
       case 2:
         if (path[4] === 0) {
           return PathTypes.PATH_WALLET_STAKING_KEY
+        }
+        return PathTypes.PATH_INVALID
+
+      default:
+        return PathTypes.PATH_INVALID
+    }
+  }
+
+  if (path[0] === 1854 + HD) {
+    if (path[1] !== 1815 + HD) {
+      return PathTypes.PATH_INVALID
+    }
+
+    if (path.length === 3) {
+      return PathTypes.PATH_WALLET_MULTISIG_ACCOUNT
+    }
+
+    if (path.length !== 5) {
+      return PathTypes.PATH_INVALID
+    }
+
+    switch (path[3]) {
+      case 0:
+      case 1:
+        return PathTypes.PATH_WALLET_MULTISIG_SPENDING_KEY
+
+      case 2:
+        if (path[4] === 0) {
+          return PathTypes.PATH_WALLET_MULTISIG_STAKING_KEY
         }
         return PathTypes.PATH_INVALID
 

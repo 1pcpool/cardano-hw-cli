@@ -17,6 +17,7 @@ import {
   VotingRegistrationMetaDataCborHex,
   VotingRegistrationMetaData,
   _UnsignedTxParsed,
+  AddrKeyHash,
 } from '../transaction/types'
 import {
   CryptoProvider,
@@ -208,7 +209,9 @@ const TrezorCryptoProvider: () => Promise<CryptoProvider> = async () => {
     cert: _StakingKeyRegistrationCert,
     stakeSigningFiles: HwSigningData[],
   ): TrezorTypes.CardanoCertificate => {
-    const path = findSigningPathForKeyHash(cert.pubKeyHash, stakeSigningFiles)
+    const path = findSigningPathForKeyHash(
+      (cert.stakeCredentials as AddrKeyHash).addrKeyHash, stakeSigningFiles,
+    )
     if (!path) throw Error(Errors.MissingSigningFileForCertificateError)
     return {
       type: TrezorTypes.CardanoCertificateType.STAKE_REGISTRATION,
@@ -220,7 +223,9 @@ const TrezorCryptoProvider: () => Promise<CryptoProvider> = async () => {
     cert: _StakingKeyDeregistrationCert,
     stakeSigningFiles: HwSigningData[],
   ): TrezorTypes.CardanoCertificate => {
-    const path = findSigningPathForKeyHash(cert.pubKeyHash, stakeSigningFiles)
+    const path = findSigningPathForKeyHash(
+      (cert.stakeCredentials as AddrKeyHash).addrKeyHash, stakeSigningFiles,
+    )
     if (!path) throw Error(Errors.MissingSigningFileForCertificateError)
     return {
       type: TrezorTypes.CardanoCertificateType.STAKE_DEREGISTRATION,
@@ -231,7 +236,9 @@ const TrezorCryptoProvider: () => Promise<CryptoProvider> = async () => {
   const prepareDelegationCert = (
     cert: _DelegationCert, stakeSigningFiles: HwSigningData[],
   ): TrezorTypes.CardanoCertificate => {
-    const path = findSigningPathForKeyHash(cert.pubKeyHash, stakeSigningFiles)
+    const path = findSigningPathForKeyHash(
+      (cert.stakeCredentials as AddrKeyHash).addrKeyHash, stakeSigningFiles,
+    )
     if (!path) throw Error(Errors.MissingSigningFileForCertificateError)
     return {
       type: TrezorTypes.CardanoCertificateType.STAKE_DELEGATION,
